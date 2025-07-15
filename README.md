@@ -21,3 +21,4 @@ step 1. 엔티티 매핑
 1. Member entity,repository 클래스를 JPA로 리팩토링
 2. Product entity,repository 클래스를 JPA로 리팩토링
 3. WishList entity,repository 클래스를 JPA로 리팩토링
+4. @DataJpaTest를 사용하여 WishListRepositoryTest
