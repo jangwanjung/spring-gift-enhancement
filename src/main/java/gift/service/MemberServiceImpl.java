@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Service
 public class MemberServiceImpl implements MemberService {
 
@@ -22,18 +24,18 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void saveMember(MemberRequestDto memberRequestDto) {
-        memberRepository.saveMember(memberRequestDto.getEmail(), memberRequestDto.getPassword(), memberRequestDto.getRole());
+        memberRepository.save(memberRequestDto.toEntity());
     }
 
     @Override
     public boolean existMember(MemberRequestDto memberRequestDto) {
-        int membercount = memberRepository.countMember(memberRequestDto.getEmail(), memberRequestDto.getPassword());
+        Optional<Member> member = memberRepository.findByEmailAndPassword(memberRequestDto.getEmail(), memberRequestDto.getPassword());
 
-        return membercount>=1;
+        return member.isPresent();
     }
 
     @Override
-    public Member findByEmail (String email) {
+    public Optional<Member> findByEmail (String email) {
         return memberRepository.findByEmail(email);
     }
 }

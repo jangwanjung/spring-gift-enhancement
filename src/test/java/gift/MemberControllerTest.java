@@ -1,9 +1,8 @@
 package gift;
 
 import gift.dto.MemberRequestDto;
-import gift.dto.ProductRequestDto;
-import gift.dto.ProductResponseDto;
 import gift.dto.TokenResponseDto;
+import gift.entity.Member;
 import gift.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
@@ -32,8 +30,8 @@ public class MemberControllerTest {
 
     @BeforeEach
     void setUp() {
-        memberRepository.deleteAllMembers();
-        memberRepository.saveMember("tjdrj530@naver.com","tjdrj530","USER");
+        memberRepository.deleteAll();
+        memberRepository.save(new Member("tjdrj530@naver.com","tjdrj530","USER"));
     }
 
 
@@ -41,7 +39,7 @@ public class MemberControllerTest {
     void 회원가입시_정상입력되면_200이_반환된다(){
         String url = "http://localhost:" + port + "/api/members/register";
         MemberRequestDto memberRequestDto = new MemberRequestDto();
-        memberRequestDto.setEmail("tjdrj530@naver.com");
+        memberRequestDto.setEmail("tjdrj123@naver.com");
         memberRequestDto.setPassword("tjdrj530");
 
         var response = client.post()
