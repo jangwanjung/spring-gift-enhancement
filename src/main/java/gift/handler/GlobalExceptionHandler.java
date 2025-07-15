@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.AccessDeniedException;
 
@@ -19,6 +20,13 @@ public class GlobalExceptionHandler {
         String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
 
         return ResponseEntity.badRequest().body(errorMessage);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> handleResponseStatusException(ResponseStatusException e) {
+        String errorMessage = e.getMessage();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+
     }
 
     @ExceptionHandler(AuthenticationException.class)

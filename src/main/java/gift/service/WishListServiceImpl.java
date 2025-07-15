@@ -2,9 +2,11 @@ package gift.service;
 
 import gift.dto.WishListRequestDto;
 import gift.dto.WishListResponseDto;
+import gift.entity.Member;
 import gift.entity.Product;
 import gift.entity.WishList;
 import gift.exception.WishListAccessDeniedException;
+import gift.repository.MemberRepository;
 import gift.repository.ProductRepository;
 import gift.repository.WishListRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,51 +24,59 @@ public class WishListServiceImpl implements WishListService {
 
     private final WishListRepository wishListRepository;
     private final ProductRepository productRepository;
+    private final MemberRepository memberRepository;
 
-    public WishListServiceImpl(WishListRepository wishListRepository, ProductRepository productRepository) {
+    public WishListServiceImpl(WishListRepository wishListRepository, ProductRepository productRepository, MemberRepository memberRepository) {
         this.wishListRepository = wishListRepository;
         this.productRepository = productRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Override
     public List<WishListResponseDto> getWishListByMemberId(Long memberId) {
-        List<WishList> wishLists = wishListRepository.getWishListByMemberId(memberId);
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = "+memberId));
+        List<WishList> wishLists = member.getWishLists();
+
 
         List<WishListResponseDto> wishListResponseDtoList = wishLists.stream()
                 .map(wishList -> {
-                    // productId로 product 조회
-                    Product product = productRepository.findById(wishList.getProductId()).orElseThrow(()->
-                            new ResponseStatusException(HttpStatus.NOT_FOUND,"상품을 찾을 수 없습니다. id = "+wishList.getId()));
-
                     return new WishListResponseDto(
                             wishList.getId(),
-                            wishList.getProductId(),
+                            wishList.getProduct().getId(),
                             wishList.getQuantity(),
-                            product.getName(),
-                            product.getPrice(),
-                            product.getImageUrl()
-                    );
-                })
-                .toList();
+                            wishList.getProduct().getName(),
+                            wishList.getProduct().getPrice(),
+                            wishList.getProduct().getImageUrl()
+                            );
+                }).toList();
         return wishListResponseDtoList;
     }
 
     @Override
     public void addWishList(Long memberId, WishListRequestDto wishListRequestDto) {
-        wishListRepository.addWishList(memberId, wishListRequestDto.getProductId(), wishListRequestDto.getQuantity());
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = "+memberId));
+        Product product = productRepository.findById(wishListRequestDto.getProductId()).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당상품을 찾을 수 없습니다. id = "+wishListRequestDto.getProductId()));
+        WishList wishList = new WishList(member,product,wishListRequestDto.getQuantity());
+        wishListRepository.save(wishList);
 
     }
 
     @Override
     public void deleteWishList(Long memberId, Long wishListId) {
         validateWishListByMemberIdAndWishListId(memberId, wishListId);
-        wishListRepository.deleteWishList(wishListId);
+        wishListRepository.deleteById(wishListId);
     }
 
     @Override
     public void validateWishListByMemberIdAndWishListId(Long memberId, Long wishListId){
-        if(!wishListRepository.isWishListExistByMemberIdAndWishListId(memberId, wishListId)) {
-            throw new WishListAccessDeniedException();
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = "+memberId));
+        List<WishList> wishLists = member.getWishLists();
+        for (WishList wishList : wishLists) {
+            if (wishList.getId().equals(wishListId)) {
+                return;
+            }
         }
+        throw new WishListAccessDeniedException();
+
     }
 }
