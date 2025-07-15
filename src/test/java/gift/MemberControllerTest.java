@@ -4,6 +4,7 @@ import gift.dto.MemberRequestDto;
 import gift.dto.ProductRequestDto;
 import gift.dto.ProductResponseDto;
 import gift.dto.TokenResponseDto;
+import gift.entity.Member;
 import gift.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,8 +33,8 @@ public class MemberControllerTest {
 
     @BeforeEach
     void setUp() {
-        memberRepository.deleteAllMembers();
-        memberRepository.saveMember("tjdrj530@naver.com","tjdrj530","USER");
+        memberRepository.deleteAll();
+        memberRepository.save(new Member("tjdrj530@naver.com","tjdrj530","USER"));
     }
 
 

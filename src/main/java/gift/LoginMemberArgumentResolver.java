@@ -14,6 +14,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.Optional;
+
 @Component
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -55,9 +57,9 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         String email = jwtUtil.extractEmail(token);
 
 
-        Member member = memberService.findByEmail(email);
+        Optional<Member> member = memberService.findByEmail(email);
 
-        if (member == null) {
+        if (member.isEmpty()) {
             throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
         }
 

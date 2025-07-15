@@ -7,15 +7,6 @@ create table products
     primary key (id)
 );
 
-create table members
-(
-    id bigint auto_increment,
-    email varchar(255),
-    password varchar(255),
-    role varchar(100),
-    primary key (id)
-);
-
 create table wish_list
 (
     id bigint auto_increment,
