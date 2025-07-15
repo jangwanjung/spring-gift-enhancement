@@ -1,11 +1,3 @@
-create table products
-(
-    id        bigint auto_increment,
-    name      varchar(100),
-    price     bigint,
-    image_url varchar(255),
-    primary key (id)
-);
 
 create table wish_list
 (
@@ -15,4 +7,4 @@ create table wish_list
     quantity int,
     primary key (id)
 
-)
+);

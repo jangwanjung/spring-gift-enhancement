@@ -7,7 +7,10 @@ import gift.entity.WishList;
 import gift.exception.WishListAccessDeniedException;
 import gift.repository.ProductRepository;
 import gift.repository.WishListRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
@@ -32,7 +35,8 @@ public class WishListServiceImpl implements WishListService {
         List<WishListResponseDto> wishListResponseDtoList = wishLists.stream()
                 .map(wishList -> {
                     // productId로 product 조회
-                    Product product = productRepository.findProduct(wishList.getProductId());
+                    Product product = productRepository.findById(wishList.getProductId()).orElseThrow(()->
+                            new ResponseStatusException(HttpStatus.NOT_FOUND,"상품을 찾을 수 없습니다. id = "+wishList.getId()));
 
                     return new WishListResponseDto(
                             wishList.getId(),
