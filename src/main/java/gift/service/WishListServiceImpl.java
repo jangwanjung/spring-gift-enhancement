@@ -54,8 +54,8 @@ public class WishListServiceImpl implements WishListService {
 
     @Override
     public void addWishList(Long memberId, WishListRequestDto wishListRequestDto) {
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = "+memberId));
-        Product product = productRepository.findById(wishListRequestDto.getProductId()).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당상품을 찾을 수 없습니다. id = "+wishListRequestDto.getProductId()));
+        Member member = findMemberById(memberId);
+        Product product = findProductById(wishListRequestDto.getProductId());
         WishList wishList = new WishList(member,product,wishListRequestDto.getQuantity());
         wishListRepository.save(wishList);
 
@@ -69,7 +69,7 @@ public class WishListServiceImpl implements WishListService {
 
     @Override
     public void validateWishListByMemberIdAndWishListId(Long memberId, Long wishListId){
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = "+memberId));
+        Member member = findMemberById(memberId);
         List<WishList> wishLists = member.getWishLists();
         for (WishList wishList : wishLists) {
             if (wishList.getId().equals(wishListId)) {
@@ -78,5 +78,22 @@ public class WishListServiceImpl implements WishListService {
         }
         throw new WishListAccessDeniedException();
 
+    }
+
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "해당유저를 찾을 수 없습니다. id = " + memberId
+                ));
+    }
+
+
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "해당상품을 찾을 수 없습니다. id = " + productId
+                ));
     }
 }

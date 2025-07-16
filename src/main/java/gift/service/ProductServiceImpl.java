@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto requestDto) {
 
-        Product product = productRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다. id = "+id));
+        Product product = findProductById(id);
 
         product.setName(requestDto.getName());
         product.setPrice(requestDto.getPrice());
@@ -71,5 +71,13 @@ public class ProductServiceImpl implements ProductService {
         );
 
         return productResponseDtoPage;
+    }
+
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "해당상품을 찾을 수 없습니다. id = " + productId
+                ));
     }
 }
