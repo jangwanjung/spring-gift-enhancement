@@ -10,6 +10,8 @@ import gift.repository.MemberRepository;
 import gift.repository.ProductRepository;
 import gift.repository.WishListRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,23 +35,21 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public List<WishListResponseDto> getWishListByMemberId(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = "+memberId));
-        List<WishList> wishLists = member.getWishLists();
+    public Page<WishListResponseDto> getWishListByMemberId(Long memberId, Pageable pageable) {
+        if(!memberRepository.existsById(memberId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = " + memberId);
+        }
+        Page<WishList> wishListPage = wishListRepository.findByMemberId(memberId, pageable);
+        Page<WishListResponseDto> wishListResponseDtoPage = wishListPage.map(wishList -> new WishListResponseDto(
+                wishList.getId(),
+                wishList.getProduct().getId(),
+                wishList.getQuantity(),
+                wishList.getProduct().getName(),
+                wishList.getProduct().getPrice(),
+                wishList.getProduct().getImageUrl()
+        ));
 
-
-        List<WishListResponseDto> wishListResponseDtoList = wishLists.stream()
-                .map(wishList -> {
-                    return new WishListResponseDto(
-                            wishList.getId(),
-                            wishList.getProduct().getId(),
-                            wishList.getQuantity(),
-                            wishList.getProduct().getName(),
-                            wishList.getProduct().getPrice(),
-                            wishList.getProduct().getImageUrl()
-                            );
-                }).toList();
-        return wishListResponseDtoList;
+        return wishListResponseDtoPage;
     }
 
     @Override
