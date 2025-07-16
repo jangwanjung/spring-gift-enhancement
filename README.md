@@ -22,3 +22,8 @@ step 1. 엔티티 매핑
 2. Product entity,repository 클래스를 JPA로 리팩토링
 3. WishList entity,repository 클래스를 JPA로 리팩토링
 4. @DataJpaTest를 사용하여 WishListRepositoryTest
+
+step 2. 페이지네이션
+
+1. 위시리스트를 페이지네이션을 사용하여 조회
+2. 상품리스트를 페이지네이션을 사용하여 조회
