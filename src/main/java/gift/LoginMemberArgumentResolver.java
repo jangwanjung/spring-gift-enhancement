@@ -8,11 +8,15 @@ import gift.service.MemberService;
 import gift.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @Component
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
@@ -55,12 +59,6 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         String email = jwtUtil.extractEmail(token);
 
 
-        Member member = memberService.findByEmail(email);
-
-        if (member == null) {
-            throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
-        }
-
-        return member;
+        return memberService.findByEmail(email).orElseThrow(()-> new UserNotFoundException("사용자를 찾을 수 없습니다."));
     }
 }

@@ -1,5 +1,6 @@
 package gift.dto;
 
+import gift.entity.Member;
 import jakarta.validation.constraints.Email;
 
 public class MemberRequestDto {
@@ -31,6 +32,11 @@ public class MemberRequestDto {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Member toEntity() {
+        return new Member(email,password,role);
+
     }
 
 

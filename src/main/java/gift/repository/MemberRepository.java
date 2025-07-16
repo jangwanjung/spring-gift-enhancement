@@ -2,14 +2,16 @@ package gift.repository;
 
 import gift.dto.TokenResponseDto;
 import gift.entity.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MemberRepository {
+import java.util.Optional;
 
-    void saveMember(String email, String password, String role);
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Integer countMember(String email, String password);
 
-    Member findByEmail(String email);
 
-    void deleteAllMembers();
+
+    Optional<Member> findByEmailAndPassword(String email, String password);
+
+    Optional<Member> findByEmail(String email);
 }

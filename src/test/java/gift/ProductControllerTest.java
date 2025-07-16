@@ -2,9 +2,7 @@ package gift;
 
 import gift.dto.ProductRequestDto;
 import gift.dto.ProductResponseDto;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;

@@ -2,6 +2,7 @@ package gift.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import gift.entity.Product;
 import jakarta.validation.constraints.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -58,5 +59,9 @@ public class ProductRequestDto {
     }
     public void setKakaoWordAllow(boolean kakaoWordAllow) {
         this.kakaoWordAllow = kakaoWordAllow;
+    }
+
+    public Product toEntity() {
+       return new Product(name, price, imageUrl);
     }
 }

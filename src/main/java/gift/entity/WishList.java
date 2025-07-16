@@ -1,17 +1,38 @@
 package gift.entity;
 
+import jakarta.persistence.*;
+
+@Entity
 public class WishList {
 
+    public WishList() {
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long memberId;
-    private Long productId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Member member;
+
+    @ManyToOne
+    private Product product;
+
+    @Column(nullable = false)
     private Integer quantity;
 
 
-    public WishList(Long id, Long memberId, Long productId, Integer quantity) {
+    public WishList(Long id, Member member, Product product, Integer quantity) {
         this.id = id;
-        this.memberId = memberId;
-        this.productId = productId;
+        this.member = member;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public WishList(Member member, Product product, Integer quantity) {
+        this.member = member;
+        this.product = product;
         this.quantity = quantity;
     }
 
@@ -19,12 +40,12 @@ public class WishList {
         return id;
     }
 
-    public Long getMemberId() {
-        return memberId;
+    public Member getMember() {
+        return member;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
     public Integer getQuantity() {

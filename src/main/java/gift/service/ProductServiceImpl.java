@@ -4,11 +4,14 @@ import gift.dto.ProductRequestDto;
 import gift.dto.ProductResponseDto;
 import gift.entity.Product;
 import gift.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,15 +25,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponseDto saveProduct(ProductRequestDto requestDto) {
-        Product product = new Product(requestDto.getName(), requestDto.getPrice(), requestDto.getImageUrl());
-        Product saveProduct = productRepository.saveProduct(product);
+        Product saveProduct = productRepository.save(requestDto.toEntity());
 
         return new ProductResponseDto(saveProduct.getId(), saveProduct.getName(), saveProduct.getPrice(), saveProduct.getImageUrl());
     }
 
     @Override
     public List<ProductResponseDto> findAllProducts() {
-        List<Product> allProducts = productRepository.findAllProducts();
+        List<Product> allProducts = productRepository.findAll();
         List<ProductResponseDto> productResponseDtoList = allProducts.stream()
                 .map(product -> new ProductResponseDto(product.getId(), product.getName(), product.getPrice(), product.getImageUrl()))
                 .collect(Collectors.toList());
@@ -39,19 +41,19 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
+    @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto requestDto) {
 
+        Product product = productRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다. id = "+id));
 
-        int rows = productRepository.updateProduct(id, requestDto.getName(), requestDto.getPrice(), requestDto.getImageUrl());
-        if (rows == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다. id = " + id);
-        }
-        Product product = productRepository.findProduct(id);
+        product.setName(requestDto.getName());
+        product.setPrice(requestDto.getPrice());
+        product.setImageUrl(requestDto.getImageUrl());
         return new ProductResponseDto(product.getId(), product.getName(), product.getPrice(), product.getImageUrl());
     }
 
     @Override
     public void deleteProduct(Long id) {
-        productRepository.deleteProduct(id);
+        productRepository.deleteById(id);
     }
 }
