@@ -70,14 +70,7 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductResponseDto> findAllProductPage(Pageable pageable) {
         Page<Product> productPage = productRepository.findAll(pageable);
 
-        Page<ProductResponseDto> productResponseDtoPage = productPage.map(product -> new ProductResponseDto(
-                product.getId(),
-                product.getName(),
-                product.getPrice(),
-                product.getImageUrl(),
-                product.getOptions()
-                )
-        );
+        Page<ProductResponseDto> productResponseDtoPage = productPage.map(ProductResponseDto::from);
 
         return productResponseDtoPage;
     }

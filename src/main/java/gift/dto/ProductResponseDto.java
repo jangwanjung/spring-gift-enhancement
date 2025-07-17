@@ -1,6 +1,7 @@
 package gift.dto;
 
 import gift.entity.Option;
+import gift.entity.Product;
 
 import java.util.List;
 
@@ -40,5 +41,10 @@ public class ProductResponseDto {
     public List<Option> getOptions() {
         return options;
     }
+
+    public static ProductResponseDto from(Product product) {
+        return new ProductResponseDto(product.getId(), product.getName(), product.getPrice(), product.getImageUrl(), product.getOptions());
+    }
+
 
 }
