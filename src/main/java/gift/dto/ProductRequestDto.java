@@ -3,8 +3,12 @@ package gift.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gift.entity.Product;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductRequestDto {
 
@@ -23,6 +27,11 @@ public class ProductRequestDto {
     @NotBlank
     private String imageUrl;
 
+    @Valid
+    @NotEmpty(message = "최소 1개 이상의 옵션이 필요합니다.")
+    private List<OptionRequestDto> options = new ArrayList<>();
+
+
     @JsonProperty("kakaoWordAllow")
     private boolean kakaoWordAllow = false;
 
@@ -37,6 +46,10 @@ public class ProductRequestDto {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public List<OptionRequestDto> getOptions() {
+        return options;
     }
 
     @JsonIgnore

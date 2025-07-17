@@ -20,23 +20,27 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final OptionService optionService;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, OptionService optionService) {
         this.productRepository = productRepository;
+        this.optionService = optionService;
     }
 
     @Override
     public ProductResponseDto saveProduct(ProductRequestDto requestDto) {
-        Product saveProduct = productRepository.save(requestDto.toEntity());
+        Product product = requestDto.toEntity();
+        optionService.saveOptions(product,requestDto.getOptions());
+        Product saveProduct = productRepository.save(product);
 
-        return new ProductResponseDto(saveProduct.getId(), saveProduct.getName(), saveProduct.getPrice(), saveProduct.getImageUrl());
+        return new ProductResponseDto(saveProduct.getId(), saveProduct.getName(), saveProduct.getPrice(), saveProduct.getImageUrl(), saveProduct.getOptions());
     }
 
     @Override
     public List<ProductResponseDto> findAllProducts() {
         List<Product> allProducts = productRepository.findAll();
         List<ProductResponseDto> productResponseDtoList = allProducts.stream()
-                .map(product -> new ProductResponseDto(product.getId(), product.getName(), product.getPrice(), product.getImageUrl()))
+                .map(product -> new ProductResponseDto(product.getId(), product.getName(), product.getPrice(), product.getImageUrl(), product.getOptions()))
                 .collect(Collectors.toList());
         return productResponseDtoList;
     }
@@ -51,7 +55,9 @@ public class ProductServiceImpl implements ProductService {
         product.setName(requestDto.getName());
         product.setPrice(requestDto.getPrice());
         product.setImageUrl(requestDto.getImageUrl());
-        return new ProductResponseDto(product.getId(), product.getName(), product.getPrice(), product.getImageUrl());
+        product.clearOptions();
+        optionService.saveOptions(product,requestDto.getOptions());
+        return new ProductResponseDto(product.getId(), product.getName(), product.getPrice(), product.getImageUrl(), product.getOptions());
     }
 
     @Override
@@ -67,7 +73,9 @@ public class ProductServiceImpl implements ProductService {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
-                product.getImageUrl())
+                product.getImageUrl(),
+                product.getOptions()
+                )
         );
 
         return productResponseDtoPage;
