@@ -11,4 +11,19 @@ public class OptionResponseDto {
         this.name = name;
         this.quantity = quantity;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
 }

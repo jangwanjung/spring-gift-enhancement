@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.dto.OptionResponseDto;
 import gift.dto.ProductRequestDto;
 import gift.dto.ProductResponseDto;
 import gift.entity.Product;
@@ -79,6 +80,18 @@ public class ProductServiceImpl implements ProductService {
         );
 
         return productResponseDtoPage;
+    }
+
+    @Override
+    public List<OptionResponseDto> findOptionsByProductId(Long id) {
+        Product product = findProductById(id);
+        return product.getOptions().stream()
+                .map(option -> new OptionResponseDto(
+                        option.getId(),
+                        option.getName(),
+                        option.getQuantity()
+                ))
+                .toList();
     }
 
     private Product findProductById(Long productId) {
