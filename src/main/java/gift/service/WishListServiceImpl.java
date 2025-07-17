@@ -10,6 +10,8 @@ import gift.repository.MemberRepository;
 import gift.repository.ProductRepository;
 import gift.repository.WishListRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,29 +35,27 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public List<WishListResponseDto> getWishListByMemberId(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = "+memberId));
-        List<WishList> wishLists = member.getWishLists();
+    public Page<WishListResponseDto> getWishListByMemberId(Long memberId, Pageable pageable) {
+        if(!memberRepository.existsById(memberId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = " + memberId);
+        }
+        Page<WishList> wishListPage = wishListRepository.findByMemberId(memberId, pageable);
+        Page<WishListResponseDto> wishListResponseDtoPage = wishListPage.map(wishList -> new WishListResponseDto(
+                wishList.getId(),
+                wishList.getProduct().getId(),
+                wishList.getQuantity(),
+                wishList.getProduct().getName(),
+                wishList.getProduct().getPrice(),
+                wishList.getProduct().getImageUrl()
+        ));
 
-
-        List<WishListResponseDto> wishListResponseDtoList = wishLists.stream()
-                .map(wishList -> {
-                    return new WishListResponseDto(
-                            wishList.getId(),
-                            wishList.getProduct().getId(),
-                            wishList.getQuantity(),
-                            wishList.getProduct().getName(),
-                            wishList.getProduct().getPrice(),
-                            wishList.getProduct().getImageUrl()
-                            );
-                }).toList();
-        return wishListResponseDtoList;
+        return wishListResponseDtoPage;
     }
 
     @Override
     public void addWishList(Long memberId, WishListRequestDto wishListRequestDto) {
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = "+memberId));
-        Product product = productRepository.findById(wishListRequestDto.getProductId()).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당상품을 찾을 수 없습니다. id = "+wishListRequestDto.getProductId()));
+        Member member = findMemberById(memberId);
+        Product product = findProductById(wishListRequestDto.getProductId());
         WishList wishList = new WishList(member,product,wishListRequestDto.getQuantity());
         wishListRepository.save(wishList);
 
@@ -69,7 +69,7 @@ public class WishListServiceImpl implements WishListService {
 
     @Override
     public void validateWishListByMemberIdAndWishListId(Long memberId, Long wishListId){
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당유저를 찾을 수 없습니다. id = "+memberId));
+        Member member = findMemberById(memberId);
         List<WishList> wishLists = member.getWishLists();
         for (WishList wishList : wishLists) {
             if (wishList.getId().equals(wishListId)) {
@@ -78,5 +78,22 @@ public class WishListServiceImpl implements WishListService {
         }
         throw new WishListAccessDeniedException();
 
+    }
+
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "해당유저를 찾을 수 없습니다. id = " + memberId
+                ));
+    }
+
+
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "해당상품을 찾을 수 없습니다. id = " + productId
+                ));
     }
 }

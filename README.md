@@ -22,3 +22,12 @@ step 1. 엔티티 매핑
 2. Product entity,repository 클래스를 JPA로 리팩토링
 3. WishList entity,repository 클래스를 JPA로 리팩토링
 4. @DataJpaTest를 사용하여 WishListRepositoryTest
+
+step 2. 페이지네이션
+
+1. 위시리스트를 페이지네이션을 사용하여 조회
+2. 상품리스트를 페이지네이션을 사용하여 조회
+
+step 1. 피드백
+1. ResponseStatusException의 status code를 항상404으로 반환한걸 수정
+2. Optional 타입의 null 타입확인시 중복되는 코드 메소드화
