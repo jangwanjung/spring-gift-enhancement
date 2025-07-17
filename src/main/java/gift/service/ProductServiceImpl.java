@@ -5,6 +5,8 @@ import gift.dto.ProductResponseDto;
 import gift.entity.Product;
 import gift.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto requestDto) {
 
-        Product product = productRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다. id = "+id));
+        Product product = findProductById(id);
 
         product.setName(requestDto.getName());
         product.setPrice(requestDto.getPrice());
@@ -55,5 +57,27 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<ProductResponseDto> findAllProductPage(Pageable pageable) {
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        Page<ProductResponseDto> productResponseDtoPage = productPage.map(product -> new ProductResponseDto(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getImageUrl())
+        );
+
+        return productResponseDtoPage;
+    }
+
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "해당상품을 찾을 수 없습니다. id = " + productId
+                ));
     }
 }
