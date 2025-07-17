@@ -39,5 +39,9 @@ public class Option {
         this.product = product;
     }
 
+    public void sellOption(int sellQuantity) {
+        this.quantity = quantity - sellQuantity;
+    }
+
 
 }
