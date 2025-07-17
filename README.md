@@ -1,14 +1,15 @@
 # spring-gift-enhancement
 
-| method | url                   | 기능       |
-|--------|-----------------------|----------|
-| GET    | /api/products         | 상품 전체 조회 |
-| POST   | /api/products         | 상품 생성    |
-| PATCH  | /api/products/{id}    | 상품 수정    |
-| DELETE | /api/products/{id}    | 상품 삭제    |
-| GET    | /admin                | 관리자 페이지  |
-| POST   | /api/members/register | 회원가입     |
-| POST   | /api/members/login    | 로그인      |
+| method | url                        | 기능       |
+|--------|----------------------------|----------|
+| GET    | /api/products              | 상품 전체 조회 |
+| POST   | /api/products              | 상품 생성    |
+| PATCH  | /api/products/{id}         | 상품 수정    |
+| DELETE | /api/products/{id}         | 상품 삭제    |
+| GET    | /api/products/{id}/options | 상품 옵션 조회 |
+| GET    | /admin                     | 관리자 페이지  |
+| POST   | /api/members/register      | 회원가입     |
+| POST   | /api/members/login         | 로그인      |
 
 step 1. 엔티티 매핑
 
