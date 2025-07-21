@@ -29,4 +29,12 @@ public class OptionRequestDto {
     public Option   toEntity() {
         return new Option(name,quantity);
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 }

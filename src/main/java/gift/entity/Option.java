@@ -34,6 +34,21 @@ public class Option {
         return quantity;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
     public void changeProduct(Product product) {
         this.product = product;

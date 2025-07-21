@@ -1,7 +1,9 @@
 package gift;
 
+import gift.dto.OptionRequestDto;
 import gift.dto.ProductRequestDto;
 import gift.dto.ProductResponseDto;
+import gift.entity.Option;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -9,6 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -29,6 +35,20 @@ public class ProductControllerTest {
         productRequestDto.setPrice(1000L);
         productRequestDto.setImageUrl("image.jpg");
 
+        OptionRequestDto optionRequestDto1 = new OptionRequestDto();
+        optionRequestDto1.setName("옵션이름1");
+        optionRequestDto1.setQuantity(1000);
+
+        OptionRequestDto optionRequestDto2 = new OptionRequestDto();
+        optionRequestDto2.setName("옵션이름2");
+        optionRequestDto2.setQuantity(2000);
+
+        List<OptionRequestDto> options = new ArrayList<>();
+        options.add(optionRequestDto1);
+        options.add(optionRequestDto2);
+
+        productRequestDto.setOptions(options);
+
         var response = client.post()
                 .uri(url)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -46,6 +66,20 @@ public class ProductControllerTest {
         productRequestDto.setPrice(1000L);
         productRequestDto.setImageUrl("image.jpg");
         productRequestDto.setKakaoWordAllow(true);
+
+        OptionRequestDto optionRequestDto1 = new OptionRequestDto();
+        optionRequestDto1.setName("옵션이름1");
+        optionRequestDto1.setQuantity(1000);
+
+        OptionRequestDto optionRequestDto2 = new OptionRequestDto();
+        optionRequestDto2.setName("옵션이름2");
+        optionRequestDto2.setQuantity(2000);
+
+        List<OptionRequestDto> options = new ArrayList<>();
+        options.add(optionRequestDto1);
+        options.add(optionRequestDto2);
+
+        productRequestDto.setOptions(options);
 
         var response = client.post()
                 .uri(url)

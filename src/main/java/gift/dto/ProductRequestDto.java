@@ -73,6 +73,9 @@ public class ProductRequestDto {
     public void setKakaoWordAllow(boolean kakaoWordAllow) {
         this.kakaoWordAllow = kakaoWordAllow;
     }
+    public void setOptions(List<OptionRequestDto> options) {
+        this.options = options;
+    }
 
     public Product toEntity() {
        return new Product(name, price, imageUrl);
