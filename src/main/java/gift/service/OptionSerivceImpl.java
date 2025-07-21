@@ -37,6 +37,9 @@ public class OptionSerivceImpl implements OptionService{
     @Transactional
     public OptionResponseDto sellOption(Long id, Integer sellQuantity) {
         Option option = findOptionById(id);
+        if(sellQuantity > option.getQuantity()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "재고가 부족합니다.");
+        }
         option.sellOption(sellQuantity);
         return new OptionResponseDto(option.getId(), option.getName(), option.getQuantity());
     }
