@@ -2,6 +2,8 @@ package gift.entity;
 
 import gift.dto.OptionRequestDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ public class Product {
     private String imageUrl;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotEmpty(message = "상품에는 최소 하나 이상의 옵션이 있어야 합니다.")
     private List<Option> options = new ArrayList<Option>();
 
     public Product(String name, long price, String imageUrl) {

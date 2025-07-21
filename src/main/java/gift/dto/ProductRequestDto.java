@@ -12,8 +12,8 @@ import java.util.List;
 
 public class ProductRequestDto {
 
-    @NotBlank
-    @Size(min = 1, max = 15)
+    @NotBlank(message = "상품명을 입력해야합니다")
+    @Size(min = 1, max = 15, message = "상품명의 크기는 1에서 15사이여야 합니다")
     @Pattern(
             regexp = "^[a-zA-Z0-9가-힣\\s\\(\\)\\[\\]\\+\\-\\&/_]*$",
             message = "이름에는 ( ) [ ] + - & / _ 외의 특수문자를 사용할 수 없습니다."
@@ -55,7 +55,7 @@ public class ProductRequestDto {
     @JsonIgnore
     @AssertTrue(message = "'카카오'라는단어는담당 MD와 협의한 경우에만 사용할 수 있습니다.")
     public boolean isKakaoWordAllowed(){
-        if (!kakaoWordAllow && name.contains("카카오")){
+        if (!kakaoWordAllow && name != null && name.contains("카카오")){
             return false;
         }
         return true;
